@@ -552,7 +552,7 @@ videoDestinationURL:(NSURL*)videoDestinationURL
         NSString *path = [[parentURL.path stringByAppendingString:@"/"] stringByAppendingString:[[NSUUID UUID] UUIDString]];
         path = [path stringByAppendingString:@".mp4"];
         NSURL *outputURL = [NSURL fileURLWithPath:path];
-        [self convertVideoToLowQuailtyWithInputURL:videoDestinationURL outputURL:outputURL handler:^(AVAssetExportSession *exportSession) {
+        [self convertVideoToMP4WithInputURL:videoDestinationURL outputURL:outputURL handler:^(AVAssetExportSession *exportSession) {
             if (exportSession.status == AVAssetExportSessionStatusCompleted) {
                 [self.response setObject:outputURL.absoluteString forKey:@"uri"];
                 self.callback(@[self.response]);
@@ -584,12 +584,12 @@ videoDestinationURL:(NSURL*)videoDestinationURL
     }
 }
 
-- (void)convertVideoToLowQuailtyWithInputURL:(NSURL*)inputURL
+- (void)convertVideoToMP4WithInputURL:(NSURL*)inputURL
                                    outputURL:(NSURL*)outputURL
                                      handler:(void (^)(AVAssetExportSession*))handler {
     [[NSFileManager defaultManager] removeItemAtURL:outputURL error:nil];
     AVURLAsset *asset = [AVURLAsset URLAssetWithURL:inputURL options:nil];
-    AVAssetExportSession *exportSession = [[AVAssetExportSession alloc] initWithAsset:asset presetName:AVAssetExportPresetMediumQuality];
+    AVAssetExportSession *exportSession = [[AVAssetExportSession alloc] initWithAsset:asset presetName:AVAssetExportPresetPassthrough];
 
     exportSession.outputURL = outputURL;
     exportSession.outputFileType = AVFileTypeMPEG4;
